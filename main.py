@@ -12,6 +12,7 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Color, Line, Rectangle
 from kivy.uix.boxlayout import BoxLayout
 
+
 class Cube(Widget):
     mass = NumericProperty(0)
 
@@ -24,9 +25,13 @@ class Cube(Widget):
             Color(0, 0, 1)  # Синий цвет кубика
             self.rect = Rectangle(size=self.size, pos=self.pos)
         self.bind(pos=self.update_rect, size=self.update_rect)
+        print(self.pos)
 
     def update_rect(self, *args):
+        # self.x = Window.width / 2 -10
+        self.y = Window.height / 2 * 0.68 + 2
         self.rect.pos = self.pos
+
 
 class LineWidget(FloatLayout):
     def __init__(self, **kwargs):
@@ -49,7 +54,6 @@ class LineWidget(FloatLayout):
         with self.canvas:
             Color(.20, .20, .20)  # красный цвет
             Line(points=[self.width / 3, self.line_y, self.width, self.line_y], width=2)
-            return self.width
 
     def add_cube(self, mass, position):
         # Добавляем кубик на линию
@@ -57,6 +61,7 @@ class LineWidget(FloatLayout):
         cube.pos = (position, self.height / 2 - cube.height / 2)  # Центрируем кубик по вертикали
         self.add_widget(cube)
         self.cubes.append(cube)
+
 
 #  для текста "Задайте массу"
 class MHintTextInput(TextInput):
@@ -77,6 +82,7 @@ class MHintTextInput(TextInput):
             if self.text == '':
                 self.text = self.hint_text
                 self.color = (0.5, 0.5, 0.5, 1)  # Серый цвет подсказки
+
 
 # для текста "Задайте расстояние"
 class LHintTextInput(TextInput):
@@ -101,8 +107,6 @@ class LHintTextInput(TextInput):
 
 class MainApp(App):
     def build(self):
-        line_widget = LineWidget()
-        self.x = line_widget.draw_line()
         self.leftlist1 = []  # Списки для хранения весов
         self.leftlist2 = []
         self.rightlist1 = []
@@ -132,7 +136,7 @@ class MainApp(App):
         center_button.add_widget(self.centerinput1)
         self.centerinput2 = LHintTextInput(size_hint=(0.3, 0.1), height=40, pos_hint={'center_x': 0.5, 'center_y': 0.7})
         center_button.add_widget(self.centerinput2)
-        
+
         # Добавляем правую кнопку в Layout
         layout.add_widget(center_button)
 
@@ -206,7 +210,7 @@ class MainApp(App):
             self.threeshow_popup(instance)
             return
         self.leftresult = sum(a * b for a, b in zip(self.leftlist1, self.leftlist2))
-        self.rightresult = sum(a * b for a,b in zip(self.rightlist1, self.rightlist2))
+        self.rightresult = sum(a * b for a, b in zip(self.rightlist1, self.rightlist2))
         print("Результат лево:", self.leftresult)
         print("результат право:", self.rightresult)
         if self.leftresult > self.rightresult:
@@ -216,6 +220,7 @@ class MainApp(App):
             print("рычаг перевешивает на право")
             self.result = (self.rightresult - self.leftresult) / self.center
         if self.leftresult == self.rightresult:
+            self.result = 0
             print("рычаг в равновесии")
         var = int(self.result)
         if var == self.result:
@@ -228,6 +233,7 @@ class MainApp(App):
     # Функции добавления веса слева, справа и по центру
     # Слева
     def left_add_weight(self, instance, *args):
+        self.x = Window.width
         left_weight1 = self.leftinput1.text
         left_weight2 = self.leftinput2.text
         try:
@@ -235,14 +241,16 @@ class MainApp(App):
             left_weight2 = float(left_weight2)
             self.leftlist1.append(left_weight1)
             self.leftlist2.append(left_weight2)
-            position = self.x * 3.9   # Положение кубика на линии
+            position = ((self.x / 2 - 10) - ((left_weight2) * (self.x / 400)))  # Положение кубика на линии
             self.line_widget.add_cube(left_weight1, position)
             print(f"Добавляем груз слева: {left_weight1}, {left_weight2}")  # Обработка данных
+            print(self.x)
         except ValueError:
             self.twoshow_popup(instance)
 
     # Справа
     def right_add_weight(self, instance):
+        self.x = Window.width
         right_weight1 = self.rightinput1.text
         right_weight2 = self.rightinput2.text
         try:
@@ -250,7 +258,7 @@ class MainApp(App):
             right_weight2 = float(right_weight2)
             self.rightlist1.append(right_weight1)
             self.rightlist2.append(right_weight2)
-            position = self.line_widget.width - (len(self.rightlist1) * 100)  # Положение кубика на линии
+            position = ((self.x / 2 - 10) + ((right_weight2) * (self.x / 400)))  # Положение кубика на линии
             self.line_widget.add_cube(right_weight1, position)
             print(f"Добавляем груз справа: {right_weight1}, {right_weight2}")  # Обработка данных
         except ValueError:
@@ -283,13 +291,17 @@ class MainApp(App):
             a = str("справа")
         elif self.leftresult < self.rightresult:
             a = str("слева")
-
-        if self.center_weight2 == "Задайте расстояние...":
-            popup_label = Label(text=f"добавьте груз на расстоянии {self.result} {a}!", size_hint=(0.8, 0.2),
-                                pos_hint={'center_x': 0.5, 'center_y': 0.7})
-            close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
-        elif self.center_weight1 == "Задайте массу...":
-            popup_label = Label(text=f"добавьте груз массой {self.result} {a}!", size_hint=(0.8, 0.2),
+        if self.leftresult != self.rightresult:
+            if self.center_weight2 == "Задайте расстояние...":
+                popup_label = Label(text=f"добавьте груз на расстоянии {self.result} {a}!", size_hint=(0.8, 0.2),
+                                    pos_hint={'center_x': 0.5, 'center_y': 0.7})
+                close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+            elif self.center_weight1 == "Задайте массу...":
+                popup_label = Label(text=f"добавьте груз массой {self.result} {a}!", size_hint=(0.8, 0.2),
+                                    pos_hint={'center_x': 0.5, 'center_y': 0.7})
+                close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+        else:
+            popup_label = Label(text="рычаг в равновесии", size_hint=(0.8, 0.2),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.7})
             close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
 
@@ -339,6 +351,7 @@ class MainApp(App):
         close_button.bind(on_press=popup.dismiss)
 
         popup.open()
+
 
 if __name__ == '__main__':
     app = MainApp()
