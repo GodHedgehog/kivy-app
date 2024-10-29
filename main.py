@@ -19,7 +19,10 @@ class Cube(Widget):
     def __init__(self, mass, **kwargs):
         super(Cube, self).__init__(**kwargs)
         self.mass = mass
-        self.size = (20, 20)  # Размер кубика
+        self.x = Window.width
+        self.y = Window.height
+        self.size = (self.x * self.y / 24000, self.x * self.y / 24000)  # Размер кубика
+        print(self.y)
         self.canvas.before.clear()  # Очищаем предыдущий холст
         with self.canvas:
             Color(0, 0, 1)  # Синий цвет кубика
@@ -234,6 +237,7 @@ class MainApp(App):
     # Слева
     def left_add_weight(self, instance, *args):
         self.x = Window.width
+        self.y = Window.height
         left_weight1 = self.leftinput1.text
         left_weight2 = self.leftinput2.text
         try:
@@ -241,7 +245,7 @@ class MainApp(App):
             left_weight2 = float(left_weight2)
             self.leftlist1.append(left_weight1)
             self.leftlist2.append(left_weight2)
-            position = ((self.x / 2 - 10) - ((left_weight2) * (self.x / 400)))  # Положение кубика на линии
+            position = ((self.x / 2 - (self.x * self.y / 48000)) - ((left_weight2) * (self.x / 400)))  # Положение кубика на линии
             self.line_widget.add_cube(left_weight1, position)
             print(f"Добавляем груз слева: {left_weight1}, {left_weight2}")  # Обработка данных
             print(self.x)
@@ -295,15 +299,15 @@ class MainApp(App):
             if self.center_weight2 == "Задайте расстояние...":
                 popup_label = Label(text=f"добавьте груз на расстоянии {self.result} {a}!", size_hint=(0.8, 0.2),
                                     pos_hint={'center_x': 0.5, 'center_y': 0.7})
-                close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+                close_button = Button(text="Ок", size_hint=(0.6, 0.25), pos_hint={'center_x': 0.5, 'center_y': 0.3})
             elif self.center_weight1 == "Задайте массу...":
                 popup_label = Label(text=f"добавьте груз массой {self.result} {a}!", size_hint=(0.8, 0.2),
                                     pos_hint={'center_x': 0.5, 'center_y': 0.7})
-                close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+                close_button = Button(text="Ок", size_hint=(0.6, 0.25), pos_hint={'center_x': 0.5, 'center_y': 0.3})
         else:
             popup_label = Label(text="рычаг в равновесии", size_hint=(0.8, 0.2),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.7})
-            close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+            close_button = Button(text="Ок", size_hint=(0.6, 0.25), pos_hint={'center_x': 0.5, 'center_y': 0.3})
 
         popup_content.add_widget(popup_label)
         popup_content.add_widget(close_button)
@@ -319,7 +323,7 @@ class MainApp(App):
         popup_content = FloatLayout()
         popup_label = Label(text="Введите числа", size_hint=(0.8, 0.2),
                             pos_hint={'center_x': 0.5, 'center_y': 0.7})
-        close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+        close_button = Button(text="Ок", size_hint=(0.6, 0.25), pos_hint={'center_x': 0.5, 'center_y': 0.3})
 
         popup_content.add_widget(popup_label)
         popup_content.add_widget(close_button)
@@ -338,7 +342,7 @@ class MainApp(App):
         popup_content = FloatLayout()
         popup_label = Label(text="Введите одно значение", size_hint=(0.8, 0.2),
                             pos_hint={'center_x': 0.5, 'center_y': 0.7})
-        close_button = Button(text="Ок", size_hint=(0.6, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+        close_button = Button(text="Ок", size_hint=(0.6, 0.25), pos_hint={'center_x': 0.5, 'center_y': 0.3})
 
         popup_content.add_widget(popup_label)
         popup_content.add_widget(close_button)
