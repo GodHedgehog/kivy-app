@@ -21,19 +21,17 @@ class Cube(Widget):
         self.mass = mass
         self.x = Window.width
         self.y = Window.height
-        self.size = (self.x * self.y / 24000, self.x * self.y / 24000)  # Размер кубика
-        print(self.y)
-        self.canvas.before.clear()  # Очищаем предыдущий холст
-        with self.canvas:
-            Color(0, 0, 1)  # Синий цвет кубика
-            self.rect = Rectangle(size=self.size, pos=self.pos)
+        self.a = self.x * self.y / ((self.x+self.y))
+        self.size = (self.x * self.y / ((self.x+self.y)*9.5), self.x * self.y / ((self.x+self.y)*9.5))
+        self.image = Image(source="weight.png", size=self.size)
+        self.add_widget(self.image)  # Очищаем предыдущий холст
         self.bind(pos=self.update_rect, size=self.update_rect)
-        print(self.pos)
 
     def update_rect(self, *args):
         # self.x = Window.width / 2 -10
-        self.y = Window.height / 2 * 0.68 + 2
-        self.rect.pos = self.pos
+        self.y = Window.height / 2 * 0.68 - self.a / 11
+        self.image.pos = self.pos
+        print(self.a)
 
 
 class LineWidget(FloatLayout):
@@ -245,9 +243,9 @@ class MainApp(App):
             left_weight2 = float(left_weight2)
             self.leftlist1.append(left_weight1)
             self.leftlist2.append(left_weight2)
-            position = ((self.x / 2 - (self.x * self.y / 48000)) - ((left_weight2) * (self.x / 400)))  # Положение кубика на линии
+            position = ((self.x / 2 - (self.x * self.y / ((self.x+self.y)*19))) - ((left_weight2) * (self.x / 400)))  # Положение кубика на линии
             self.line_widget.add_cube(left_weight1, position)
-            print(f"Добавляем груз слева: {left_weight1}, {left_weight2}")  # Обработка данных
+            print(f"Добавляем груз слева: {left_weight1}, {left_weight2}")
             print(self.x)
         except ValueError:
             self.twoshow_popup(instance)
@@ -255,6 +253,7 @@ class MainApp(App):
     # Справа
     def right_add_weight(self, instance):
         self.x = Window.width
+        self.y = Window.height
         right_weight1 = self.rightinput1.text
         right_weight2 = self.rightinput2.text
         try:
@@ -262,9 +261,9 @@ class MainApp(App):
             right_weight2 = float(right_weight2)
             self.rightlist1.append(right_weight1)
             self.rightlist2.append(right_weight2)
-            position = ((self.x / 2 - 10) + ((right_weight2) * (self.x / 400)))  # Положение кубика на линии
+            position = ((self.x / 2 - (self.x * self.y / ((self.x+self.y)*19))) + ((right_weight2) * (self.x / 400)))  # Положение кубика на линии
             self.line_widget.add_cube(right_weight1, position)
-            print(f"Добавляем груз справа: {right_weight1}, {right_weight2}")  # Обработка данных
+            print(f"Добавляем груз справа: {right_weight1}, {right_weight2}")
         except ValueError:
             self.twoshow_popup(instance)
 
