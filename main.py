@@ -16,7 +16,7 @@ from kivy.uix.boxlayout import BoxLayout
 class Cube(Widget):
     mass = NumericProperty(0)
 
-    def __init__(self, mass, **kwargs):
+    def __init__(self, mass, label_text, **kwargs):
         super(Cube, self).__init__(**kwargs)
         self.mass = mass
         self.x = Window.width
@@ -27,11 +27,15 @@ class Cube(Widget):
         self.add_widget(self.image)  # Очищаем предыдущий холст
         self.bind(pos=self.update_rect, size=self.update_rect)
 
+        self.label = Label(text=label_text, color=(0,0,0,1), font_size=(self.a/36), size_hint=(None, None), size=(self.size[0], self.size[1] / 4))
+        self.add_widget(self.label)
+
     def update_rect(self, *args):
         # self.x = Window.width / 2 -10
         self.y = Window.height / 2 * 0.68 - self.a / 11
         self.image.pos = self.pos
-        print(self.a)
+        self.label.pos = self.pos[0], self.pos[1] + self.a/36
+        print(self.size)
 
 
 class LineWidget(FloatLayout):
@@ -56,9 +60,9 @@ class LineWidget(FloatLayout):
             Color(.20, .20, .20)  # красный цвет
             Line(points=[self.width / 3, self.line_y, self.width, self.line_y], width=2)
 
-    def add_cube(self, mass, position):
+    def add_cube(self, mass, position, label_text):
         # Добавляем кубик на линию
-        cube = Cube(mass=mass)
+        cube = Cube(mass=mass, label_text=label_text)
         cube.pos = (position, self.height / 2 - cube.height / 2)  # Центрируем кубик по вертикали
         self.add_widget(cube)
         self.cubes.append(cube)
@@ -238,13 +242,14 @@ class MainApp(App):
         self.y = Window.height
         left_weight1 = self.leftinput1.text
         left_weight2 = self.leftinput2.text
+        left_weight = left_weight1
         try:
             left_weight1 = float(left_weight1)
             left_weight2 = float(left_weight2)
             self.leftlist1.append(left_weight1)
             self.leftlist2.append(left_weight2)
             position = ((self.x / 2 - (self.x * self.y / ((self.x+self.y)*19))) - ((left_weight2) * (self.x / 400)))  # Положение кубика на линии
-            self.line_widget.add_cube(left_weight1, position)
+            self.line_widget.add_cube(left_weight1, position, f"{left_weight}")
             print(f"Добавляем груз слева: {left_weight1}, {left_weight2}")
             print(self.x)
         except ValueError:
@@ -256,13 +261,14 @@ class MainApp(App):
         self.y = Window.height
         right_weight1 = self.rightinput1.text
         right_weight2 = self.rightinput2.text
+        right_weight = right_weight1
         try:
             right_weight1 = float(right_weight1)
             right_weight2 = float(right_weight2)
             self.rightlist1.append(right_weight1)
             self.rightlist2.append(right_weight2)
             position = ((self.x / 2 - (self.x * self.y / ((self.x+self.y)*19))) + ((right_weight2) * (self.x / 400)))  # Положение кубика на линии
-            self.line_widget.add_cube(right_weight1, position)
+            self.line_widget.add_cube(right_weight1, position, f"{right_weight}")
             print(f"Добавляем груз справа: {right_weight1}, {right_weight2}")
         except ValueError:
             self.twoshow_popup(instance)
