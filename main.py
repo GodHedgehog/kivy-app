@@ -11,7 +11,50 @@ from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Line, Rectangle
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition, NoTransition
 
+
+class MHintTextInput(TextInput):
+    hint_text = StringProperty("Задайте массу...")
+
+    def __init__(self, **kwargs):
+        super(MHintTextInput, self).__init__(**kwargs)
+        self.bind(focus=self.on_focus)
+        self.color = (0.5, 0.5, 0.5, 1)  # Цвет текста подсказки
+        self.text = self.hint_text  # Установка текста подсказки
+        self.multiline = False  # Убедитесь, что это значение False для однострочного ввода
+        self.halign = 'center'  # Устанавливаем выравнивание по центру
+
+    def on_focus(self, instance, value):
+        if value:  # Фокус на текстовом поле
+            if self.text == self.hint_text:
+                self.text = ''
+                self.color = (1, 1, 1, 1)  # Белый цвет текста
+        else:  # Убираем текст подсказки, если поле пустое
+            if self.text == '':
+                self.text = self.hint_text
+                self.color = (0.5, 0.5, 0.5, 1)  # Серый цвет подсказки
+
+class LHintTextInput(TextInput):
+    hint_text = StringProperty("Задайте расстояние...")
+
+    def __init__(self, **kwargs):
+        super(LHintTextInput, self).__init__(**kwargs)
+        self.bind(focus=self.on_focus)
+        self.color = (0.5, 0.5, 0.5, 1)
+        self.text = self.hint_text
+        self.multiline = False  # Убедитесь, что это значение False для однострочного ввода
+        self.halign = 'center'  # Устанавливаем выравнивание по центру
+
+    def on_focus(self, instance, value):
+        if value:
+            if self.text == self.hint_text:
+                self.text = ''
+                self.color = (1, 1, 1, 1)
+        else:
+            if self.text == '':
+                self.text = self.hint_text
+                self.color = (0.5, 0.5, 0.5, 1)
 
 class Cube(Widget):
     mass = NumericProperty(0)
@@ -20,23 +63,24 @@ class Cube(Widget):
         super(Cube, self).__init__(**kwargs)
         self.mass = mass
         self.x = Window.width
+        print(self.x)
         self.y = Window.height
+        print(self.y)
         self.a = self.x * self.y / ((self.x+self.y))
-        self.size = (self.x * self.y / ((self.x+self.y)*9.5), self.x * self.y / ((self.x+self.y)*9.5))
+        self.size = (self.x * self.y / ((self.x+self.y)*9.36), self.x * self.y / ((self.x+self.y)*8))
         self.image = Image(source="weight.png", size=self.size)
         self.add_widget(self.image)  # Очищаем предыдущий холст
         self.bind(pos=self.update_rect, size=self.update_rect)
 
-        self.label = Label(text=label_text, color=(0,0,0,1), font_size=(self.a/36), size_hint=(None, None), size=(self.size[0], self.size[1] / 4))
+        self.label = Label(text=label_text, color=(0, 0, 0, 1), font_size=(self.a/30), size_hint=(None, None), size=(self.size[0], self.size[1] / 4))
         self.add_widget(self.label)
 
     def update_rect(self, *args):
         # self.x = Window.width / 2 -10
-        self.y = Window.height / 2 * 0.68 - self.a / 11
+        self.y = Window.height / 2 * 0.68 - self.a / 10
         self.image.pos = self.pos
         self.label.pos = self.pos[0], self.pos[1] + self.a/36
         print(self.size)
-
 
 class LineWidget(FloatLayout):
     def __init__(self, **kwargs):
@@ -57,7 +101,7 @@ class LineWidget(FloatLayout):
         self.line_y = self.height / 2
         self.canvas.clear()  # Очищаем текущий холст
         with self.canvas:
-            Color(.20, .20, .20)  # красный цвет
+            Color(0.18, 0.21, 0.29)  # красный цвет
             Line(points=[self.width / 3, self.line_y, self.width, self.line_y], width=2)
 
     def add_cube(self, mass, position, label_text):
@@ -68,64 +112,41 @@ class LineWidget(FloatLayout):
         self.cubes.append(cube)
 
 
-#  для текста "Задайте массу"
-class MHintTextInput(TextInput):
-    hint_text = StringProperty("Задайте массу...")
-
+# Определяем второй экран
+class SecondScreen(Screen):
     def __init__(self, **kwargs):
-        super(MHintTextInput, self).__init__(**kwargs)
-        self.bind(focus=self.on_focus)
-        self.color = (0.5, 0.5, 0.5, 1)  # Цвет текста подсказки
-        self.text = self.hint_text  # Установка текста подсказки
+        super(SecondScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        label = Label(text='Это второй экран', font_size=40)
+        back_button = Button(text='Назад', size_hint=(1, 0.1))
+        back_button.bind(on_press=self.go_back)
+        layout.add_widget(label)
+        layout.add_widget(back_button)
+        self.add_widget(layout)
 
-    def on_focus(self, instance, value):
-        if value:  # Фокус на текстовом поле
-            if self.text == self.hint_text:
-                self.text = ''
-                self.color = (1, 1, 1, 1)  # Белый цвет текста
-        else:  # Убираем текст подсказки, если поле пустое
-            if self.text == '':
-                self.text = self.hint_text
-                self.color = (0.5, 0.5, 0.5, 1)  # Серый цвет подсказки
+    def go_back(self, instance):
+        self.manager.transition = NoTransition()
+        self.manager.current = 'main'  # Переключаемся обратно на основной экран
 
 
-# для текста "Задайте расстояние"
-class LHintTextInput(TextInput):
-    hint_text = StringProperty("Задайте расстояние...")
-
+class MainScreen(Screen):
     def __init__(self, **kwargs):
-        super(LHintTextInput, self).__init__(**kwargs)
-        self.bind(focus=self.on_focus)
-        self.color = (0.5, 0.5, 0.5, 1)
-        self.text = self.hint_text
-
-    def on_focus(self, instance, value):
-        if value:
-            if self.text == self.hint_text:
-                self.text = ''
-                self.color = (1, 1, 1, 1)
-        else:
-            if self.text == '':
-                self.text = self.hint_text
-                self.color = (0.5, 0.5, 0.5, 1)
-
-
-class MainApp(App):
-    def build(self):
+        super(MainScreen, self).__init__(**kwargs)
         self.leftlist1 = []  # Списки для хранения весов
         self.leftlist2 = []
         self.rightlist1 = []
         self.rightlist2 = []
-        self.center = int(0)
+        self.centerw = 0
+        self.x = Window.width
+        self.y = Window.height
+        self.size = (self.x * self.y / ((self.x + self.y) * 3.5), self.x * self.y / ((self.x + self.y) * 3.5))
 
-        # Цвет фона
-        Window.clearcolor = (0.8, 0.8, 0.8, 1)
-        layout = AnchorLayout()  # Инициализация AnchorLayout
+        Window.clearcolor = (0.91,0.90,0.99, 1)
+        layout = AnchorLayout()
 
         self.line_widget = LineWidget(size_hint=(0.75, 0.68))  # Высота линии 0.75, 0.68
         layout.add_widget(self.line_widget)
 
-        # Центральная кнопка
         center_button = FloatLayout()
         add_button = Button(
             text="груз для выравнивания",
@@ -137,15 +158,18 @@ class MainApp(App):
         center_button.add_widget(add_button)
 
         # Создаем текстовые поля для ввода чисел
-        self.centerinput1 = MHintTextInput(size_hint=(0.3, 0.1), height=40, pos_hint={'center_x': 0.5, 'center_y': 0.8})
+        self.centerinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                           foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
+                                           height=40, pos_hint={'center_x': 0.5, 'center_y': 0.8})
         center_button.add_widget(self.centerinput1)
-        self.centerinput2 = LHintTextInput(size_hint=(0.3, 0.1), height=40, pos_hint={'center_x': 0.5, 'center_y': 0.7})
+        self.centerinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                           foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
+                                           height=40, pos_hint={'center_x': 0.5, 'center_y': 0.699})
         center_button.add_widget(self.centerinput2)
 
         # Добавляем правую кнопку в Layout
         layout.add_widget(center_button)
 
-        # кнопка "вычислить"
         end_button = FloatLayout()
         add_button = Button(
             text="вычислить",
@@ -157,7 +181,6 @@ class MainApp(App):
         end_button.add_widget(add_button)
         layout.add_widget(end_button)
 
-        # кнопка "Добавить груз справа"
         right_button = FloatLayout()
         add_button = Button(
             text="Добавить груз справа",
@@ -167,17 +190,18 @@ class MainApp(App):
             on_press=self.right_add_weight  # Устанавливаем обработчик нажатия
         )
         right_button.add_widget(add_button)
-
         # Создаем текстовые поля для ввода чисел
-        self.rightinput1 = MHintTextInput(size_hint=(0.25, 0.1), height=40, pos_hint={'center_x': 0.88, 'center_y': 0.8})
+        self.rightinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                          foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                          height=40, pos_hint={'center_x': 0.88, 'center_y': 0.8})
         right_button.add_widget(self.rightinput1)
-        self.rightinput2 = LHintTextInput(size_hint=(0.25, 0.1), height=40, pos_hint={'center_x': 0.88, 'center_y': 0.7})
+        self.rightinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                          foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20),size_hint=(0.25, 0.1),
+                                          height=40, pos_hint={'center_x': 0.88, 'center_y': 0.699})
         right_button.add_widget(self.rightinput2)
-
         # Добавляем правую кнопку в Layout
         layout.add_widget(right_button)
 
-        # кнопка "Добавить груз слева"
         left_button = FloatLayout()
         add_button = Button(
             text="Добавить груз слева",
@@ -187,13 +211,15 @@ class MainApp(App):
             on_press=self.left_add_weight  # Устанавливаем обработчик нажатия
         )
         left_button.add_widget(add_button)
-
         # Создаем текстовые поля для ввода чисел
-        self.leftinput1 = MHintTextInput(size_hint=(0.25, 0.1), height=40, pos_hint={'center_x': 0.12, 'center_y': 0.8})
+        self.leftinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                         foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                         height=40, pos_hint={'center_x': 0.12, 'center_y': 0.8})
         left_button.add_widget(self.leftinput1)
-        self.leftinput2 = LHintTextInput(size_hint=(0.25, 0.1), height=40, pos_hint={'center_x': 0.12, 'center_y': 0.7})
+        self.leftinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                         foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                         height=40, pos_hint={'center_x': 0.12, 'center_y': 0.699})
         left_button.add_widget(self.leftinput2)
-
         # Добавляем левую кнопку в Layout
         layout.add_widget(left_button)
 
@@ -205,10 +231,24 @@ class MainApp(App):
         )
         img.add_widget(triangle)
         layout.add_widget(img)  # Добавляем изображение в Layout
-        return layout  # Возвращаем основной Layout
 
-    # Функции
-    # Функция выполняющая подсчёт
+        self.line_widget = LineWidget(size_hint=(0.75, 0.68))  # Высота линии 0.75, 0.68
+        layout.add_widget(self.line_widget)
+
+        fl = FloatLayout()
+        switch_button = Button(
+            background_normal="question.png",
+            background_down="question_pressed.png",
+            size_hint=(None, None),
+            size=self.size,
+            pos_hint={'center_x': 0.9, 'center_y': 0.1}  # Устанавливаем обработчик нажатия
+        )
+        switch_button.bind(on_release=self.switch_to_second_screen)
+        fl.add_widget(switch_button)
+        layout.add_widget(fl)
+
+        self.add_widget(layout)
+
     def calculate(self, instance):
         # Логика обработки Момента силы рычага
         if len(self.leftlist1) != len(self.leftlist2) or len(self.rightlist1) != len(self.rightlist2):
@@ -220,10 +260,10 @@ class MainApp(App):
         print("результат право:", self.rightresult)
         if self.leftresult > self.rightresult:
             print("рычаг перевешивает на лево")
-            self.result = (self.leftresult - self.rightresult) / self.center
+            self.result = (self.leftresult - self.rightresult) / self.centerw
         if self.leftresult < self.rightresult:
             print("рычаг перевешивает на право")
-            self.result = (self.rightresult - self.leftresult) / self.center
+            self.result = (self.rightresult - self.leftresult) / self.centerw
         if self.leftresult == self.rightresult:
             self.result = 0
             print("рычаг в равновесии")
@@ -235,11 +275,9 @@ class MainApp(App):
         else:
             self.threershow_popup(instance)
 
-    # Функции добавления веса слева, справа и по центру
-    # Слева
     def left_add_weight(self, instance, *args):
-        self.x = Window.width
-        self.y = Window.height
+        self.xx = Window.width
+        self.yy = Window.height
         left_weight1 = self.leftinput1.text
         left_weight2 = self.leftinput2.text
         left_weight = left_weight1
@@ -248,17 +286,16 @@ class MainApp(App):
             left_weight2 = float(left_weight2)
             self.leftlist1.append(left_weight1)
             self.leftlist2.append(left_weight2)
-            position = ((self.x / 2 - (self.x * self.y / ((self.x+self.y)*19))) - ((left_weight2) * (self.x / 400)))  # Положение кубика на линии
+            position = ((self.xx / 2 - (self.xx * self.yy / ((self.xx+self.yy)*19))) - ((left_weight2) * (self.xx / 400)))  # Положение кубика на линии
             self.line_widget.add_cube(left_weight1, position, f"{left_weight}")
             print(f"Добавляем груз слева: {left_weight1}, {left_weight2}")
-            print(self.x)
+            print(self.xx)
         except ValueError:
             self.twoshow_popup(instance)
 
-    # Справа
     def right_add_weight(self, instance):
-        self.x = Window.width
-        self.y = Window.height
+        self.xx = Window.width
+        self.yy = Window.height
         right_weight1 = self.rightinput1.text
         right_weight2 = self.rightinput2.text
         right_weight = right_weight1
@@ -267,13 +304,12 @@ class MainApp(App):
             right_weight2 = float(right_weight2)
             self.rightlist1.append(right_weight1)
             self.rightlist2.append(right_weight2)
-            position = ((self.x / 2 - (self.x * self.y / ((self.x+self.y)*19))) + ((right_weight2) * (self.x / 400)))  # Положение кубика на линии
+            position = ((self.xx / 2 - (self.xx * self.yy / ((self.xx+self.yy)*19))) + ((right_weight2) * (self.xx / 400)))  # Положение кубика на линии
             self.line_widget.add_cube(right_weight1, position, f"{right_weight}")
             print(f"Добавляем груз справа: {right_weight1}, {right_weight2}")
         except ValueError:
             self.twoshow_popup(instance)
 
-    # Центр
     def center_add_weight(self, instance):
         self.center_weight1 = str(self.centerinput1.text)
         self.center_weight2 = str(self.centerinput2.text)
@@ -281,19 +317,17 @@ class MainApp(App):
         if self.center_weight1 == "Задайте массу..." or self.center_weight2 == "Задайте расстояние...":
             try:
                 self.center_weight1 = float(self.center_weight1)
-                self.center = float(self.center_weight1)
+                self.centerw = float(self.center_weight1)
             except ValueError:
                 try:
                     self.center_weight2 = float(self.center_weight2)
-                    self.center = float(self.center_weight2)
+                    self.centerw = float(self.center_weight2)
                 except ValueError:
                     self.twoshow_popup(instance)
         else:
             self.oneshow_popup(instance)
-        print(f"центр: {self.center}")
+        print(f"центр: {self.centerw}")
 
-    # Попуты
-    # Вывод результата
     def threershow_popup(self, instance):
         popup_content = FloatLayout()
         if self.leftresult > self.rightresult:
@@ -323,7 +357,6 @@ class MainApp(App):
         close_button.bind(on_press=popup.dismiss)
         popup.open()
 
-    # Если введены не числа
     def twoshow_popup(self, instance):
         popup_content = FloatLayout()
         popup_label = Label(text="Введите числа", size_hint=(0.8, 0.2),
@@ -342,7 +375,6 @@ class MainApp(App):
 
         popup.open()
 
-    # Если введены два значения
     def oneshow_popup(self, instance):
         popup_content = FloatLayout()
         popup_label = Label(text="Введите одно значение", size_hint=(0.8, 0.2),
@@ -362,6 +394,19 @@ class MainApp(App):
         popup.open()
 
 
+    def switch_to_second_screen(self, instance):
+        self.manager.transition = FadeTransition(clearcolor=(0.91,0.90,0.99))
+        self.manager.current = 'second'  # Переключаемся на второй экран
+
+
+class MainApp(App):
+    def build(self):
+
+        sm = ScreenManager()  # Создаем ScreenManager
+        sm.add_widget(MainScreen(name='main'))  # Добавляем основной экран
+        sm.add_widget(SecondScreen(name='second'))  # Добавляем второй экран
+        return sm  # Возвращаем ScreenManager
+
+
 if __name__ == '__main__':
-    app = MainApp()
-    app.run()  # Запуск приложения
+    MainApp().run()  # Запуск приложения
