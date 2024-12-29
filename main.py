@@ -11,7 +11,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Line, Rectangle
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition, NoTransition
 
 
 class MHintTextInput(TextInput):
@@ -63,19 +63,21 @@ class Cube(Widget):
         super(Cube, self).__init__(**kwargs)
         self.mass = mass
         self.x = Window.width
+        print(self.x)
         self.y = Window.height
+        print(self.y)
         self.a = self.x * self.y / ((self.x+self.y))
-        self.size = (self.x * self.y / ((self.x+self.y)*9.5), self.x * self.y / ((self.x+self.y)*9.5))
+        self.size = (self.x * self.y / ((self.x+self.y)*9.36), self.x * self.y / ((self.x+self.y)*8))
         self.image = Image(source="weight.png", size=self.size)
         self.add_widget(self.image)  # Очищаем предыдущий холст
         self.bind(pos=self.update_rect, size=self.update_rect)
 
-        self.label = Label(text=label_text, color=(1, 1, 1, 1), font_size=(self.a/36), size_hint=(None, None), size=(self.size[0], self.size[1] / 4))
+        self.label = Label(text=label_text, color=(0, 0, 0, 1), font_size=(self.a/30), size_hint=(None, None), size=(self.size[0], self.size[1] / 4))
         self.add_widget(self.label)
 
     def update_rect(self, *args):
         # self.x = Window.width / 2 -10
-        self.y = Window.height / 2 * 0.68 - self.a / 11
+        self.y = Window.height / 2 * 0.68 - self.a / 10
         self.image.pos = self.pos
         self.label.pos = self.pos[0], self.pos[1] + self.a/36
         print(self.size)
@@ -123,6 +125,7 @@ class SecondScreen(Screen):
         self.add_widget(layout)
 
     def go_back(self, instance):
+        self.manager.transition = NoTransition()
         self.manager.current = 'main'  # Переключаемся обратно на основной экран
 
 
@@ -138,7 +141,7 @@ class MainScreen(Screen):
         self.y = Window.height
         self.size = (self.x * self.y / ((self.x + self.y) * 3.5), self.x * self.y / ((self.x + self.y) * 3.5))
 
-        Window.clearcolor = (0.10, 0.13, 0.17, 1)
+        Window.clearcolor = (0.91,0.90,0.99, 1)
         layout = AnchorLayout()
 
         self.line_widget = LineWidget(size_hint=(0.75, 0.68))  # Высота линии 0.75, 0.68
@@ -155,9 +158,13 @@ class MainScreen(Screen):
         center_button.add_widget(add_button)
 
         # Создаем текстовые поля для ввода чисел
-        self.centerinput1 = MHintTextInput(hint_text_color=(1, 1, 1, 0.7),foreground_color=(1, 1, 1, 1),cursor_color=(1, 1, 1, 1),border=(20, 20, 20, 20),background_color=(0.10, 0.13, 0.17, 1),size_hint=(0.3, 0.1), height=40, pos_hint={'center_x': 0.5, 'center_y': 0.8})
+        self.centerinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                           foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
+                                           height=40, pos_hint={'center_x': 0.5, 'center_y': 0.8})
         center_button.add_widget(self.centerinput1)
-        self.centerinput2 = LHintTextInput(hint_text_color=(1, 1, 1, 0.7),foreground_color=(1, 1, 1, 1),cursor_color=(1, 1, 1, 1),border=(20, 20, 20, 20),background_color=(0.10, 0.13, 0.17, 1),size_hint=(0.3, 0.1), height=40, pos_hint={'center_x': 0.5, 'center_y': 0.7})
+        self.centerinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                           foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
+                                           height=40, pos_hint={'center_x': 0.5, 'center_y': 0.699})
         center_button.add_widget(self.centerinput2)
 
         # Добавляем правую кнопку в Layout
@@ -183,15 +190,15 @@ class MainScreen(Screen):
             on_press=self.right_add_weight  # Устанавливаем обработчик нажатия
         )
         right_button.add_widget(add_button)
-
         # Создаем текстовые поля для ввода чисел
-        self.rightinput1 = MHintTextInput(hint_text_color=(1, 1, 1, 0.7),foreground_color=(1, 1, 1, 1),cursor_color=(1, 1, 1, 1),border=(20, 20, 20, 20),background_color=(0.10, 0.13, 0.17, 1),size_hint=(0.25, 0.1), height=40,
-                                          pos_hint={'center_x': 0.88, 'center_y': 0.8})
+        self.rightinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                          foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                          height=40, pos_hint={'center_x': 0.88, 'center_y': 0.8})
         right_button.add_widget(self.rightinput1)
-        self.rightinput2 = LHintTextInput(hint_text_color=(1, 1, 1, 0.7),foreground_color=(1, 1, 1, 1),cursor_color=(1, 1, 1, 1),border=(20, 20, 20, 20),background_color=(0.10, 0.13, 0.17, 1),size_hint=(0.25, 0.1), height=40,
-                                          pos_hint={'center_x': 0.88, 'center_y': 0.7})
+        self.rightinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                          foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20),size_hint=(0.25, 0.1),
+                                          height=40, pos_hint={'center_x': 0.88, 'center_y': 0.699})
         right_button.add_widget(self.rightinput2)
-
         # Добавляем правую кнопку в Layout
         layout.add_widget(right_button)
 
@@ -204,13 +211,15 @@ class MainScreen(Screen):
             on_press=self.left_add_weight  # Устанавливаем обработчик нажатия
         )
         left_button.add_widget(add_button)
-
         # Создаем текстовые поля для ввода чисел
-        self.leftinput1 = MHintTextInput(hint_text_color=(1, 1, 1, 0.7),foreground_color=(1, 1, 1, 1),cursor_color=(1, 1, 1, 1),border=(20, 20, 20, 20),background_color=(0.10, 0.13, 0.17, 1),size_hint=(0.25, 0.1), height=40, pos_hint={'center_x': 0.12, 'center_y': 0.8})
+        self.leftinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                         foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                         height=40, pos_hint={'center_x': 0.12, 'center_y': 0.8})
         left_button.add_widget(self.leftinput1)
-        self.leftinput2 = LHintTextInput(hint_text_color=(1, 1, 1, 0.7),foreground_color=(1, 1, 1, 1),cursor_color=(1, 1, 1, 1),border=(20, 20, 20, 20),background_color=(0.10, 0.13, 0.17, 1),size_hint=(0.25, 0.1), height=40, pos_hint={'center_x': 0.12, 'center_y': 0.7})
+        self.leftinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
+                                         foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                         height=40, pos_hint={'center_x': 0.12, 'center_y': 0.699})
         left_button.add_widget(self.leftinput2)
-
         # Добавляем левую кнопку в Layout
         layout.add_widget(left_button)
 
@@ -223,8 +232,8 @@ class MainScreen(Screen):
         img.add_widget(triangle)
         layout.add_widget(img)  # Добавляем изображение в Layout
 
-
-
+        self.line_widget = LineWidget(size_hint=(0.75, 0.68))  # Высота линии 0.75, 0.68
+        layout.add_widget(self.line_widget)
 
         fl = FloatLayout()
         switch_button = Button(
@@ -386,6 +395,7 @@ class MainScreen(Screen):
 
 
     def switch_to_second_screen(self, instance):
+        self.manager.transition = FadeTransition(clearcolor=(0.91,0.90,0.99))
         self.manager.current = 'second'  # Переключаемся на второй экран
 
 
