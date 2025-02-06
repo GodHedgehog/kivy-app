@@ -133,7 +133,7 @@ class SecondScreen(Screen):
                             f' После добавления грузов слева и справа нужно добавить значение груза для выравнивания (расстояние или массу).'
                             f' После нажимаем на кнопку "Вычислить" под рычагом и вам выводится то, на какое расстояние'
                             f' или же какой массы следует добавить груз.', color=(0, 0, 0, 0.8),
-                       size_hint_y=None, text_size=(self.x - 10, None), height=50, font_size=18, halign='justify')
+                       size_hint_y=None, text_size=(self.x - self.a/10, None), height=50, font_size=(self.a/20), halign='justify')
         layout.add_widget(label1)
         layout.add_widget(label2)
         scroll_view.add_widget(layout)
@@ -144,7 +144,7 @@ class SecondScreen(Screen):
             background_normal="close.png",
             background_down="close_pressed.png",
             size_hint=(None, None),
-            size=(self.size[0] / 1.2, self.size[1] / 1.2),
+            size=self.size,
             pos_hint={'center_x': 0.95, 'center_y': 0.95}  # Устанавливаем обработчик нажатия
         )
         back_button.bind(on_release=self.go_back)
