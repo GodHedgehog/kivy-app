@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = SampleApp
+title = Levecalc
 
 # (str) Package name
-package.name = nfsApk
+package.name = levecalcApk
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.novfensec
+package.domain = org.godhedgehog
 
 # (str) Source code where the main.py live
 source.dir = .
