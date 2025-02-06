@@ -9,9 +9,10 @@ from kivy.uix.label import Label
 from kivy.properties import StringProperty, NumericProperty
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
-from kivy.graphics import Color, Line, Rectangle
-from kivy.uix.boxlayout import BoxLayout
+from kivy.graphics import Color, Line
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition, NoTransition
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.boxlayout import BoxLayout
 
 
 class MHintTextInput(TextInput):
@@ -72,7 +73,7 @@ class Cube(Widget):
         self.add_widget(self.image)  # Очищаем предыдущий холст
         self.bind(pos=self.update_rect, size=self.update_rect)
 
-        self.label = Label(text=label_text, color=(0, 0, 0, 1), font_size=(self.a/30), size_hint=(None, None), size=(self.size[0], self.size[1] / 4))
+        self.label = Label(text=label_text, color=(0, 0, 0, 1), font_size=(self.a/28), size_hint=(None, None), size=(self.size[0], self.size[1] / 4))
         self.add_widget(self.label)
 
     def update_rect(self, *args):
@@ -116,13 +117,35 @@ class LineWidget(FloatLayout):
 class SecondScreen(Screen):
     def __init__(self, **kwargs):
         super(SecondScreen, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
-        label = Label(text='Это второй экран', font_size=40)
-        back_button = Button(text='Назад', size_hint=(1, 0.1))
-        back_button.bind(on_press=self.go_back)
+        self.x = Window.width
+        self.y = Window.height
+        self.a = self.x * self.y / (self.x + self.y)
+
+        yes = AnchorLayout()
+
+        scroll_view = ScrollView()
+
+        layout = BoxLayout(orientation="vertical", size_hint_y=None)
+        layout.bind(minimum_height=layout.setter('height'))
+
+        label = Label(text='Строка', color=(0, 0, 0, 0.8), pos_hint={'center_x': 0.1, 'center_y': 0.9}, size_hint_y=None, height=50, font_size=20)
         layout.add_widget(label)
-        layout.add_widget(back_button)
-        self.add_widget(layout)
+        scroll_view.add_widget(layout)
+        yes.add_widget(scroll_view)
+
+        fl = FloatLayout()
+        back_button = Button(
+            background_normal="close.png",
+            background_down="close_pressed.png",
+            size_hint=(None, None),
+            size=(self.size[0] / 1.2, self.size[1] / 1.2),
+            pos_hint={'center_x': 0.95, 'center_y': 0.95}  # Устанавливаем обработчик нажатия
+        )
+        back_button.bind(on_release=self.go_back)
+        fl.add_widget(back_button)
+        yes.add_widget(fl)
+
+        self.add_widget(yes)
 
     def go_back(self, instance):
         self.manager.transition = NoTransition()
@@ -149,21 +172,23 @@ class MainScreen(Screen):
 
         center_button = FloatLayout()
         add_button = Button(
+            background_normal="button2.png",
+            background_down="button2_pressed.png",
             text="груз для выравнивания",
             size_hint=(0.3, 0.1),
             height=50,
             pos_hint={'center_x': 0.5, 'center_y': 0.9},
-            on_press=self.center_add_weight  # Устанавливаем обработчик нажатия
+            on_release=self.center_add_weight  # Устанавливаем обработчик нажатия
         )
         center_button.add_widget(add_button)
 
         # Создаем текстовые поля для ввода чисел
         self.centerinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
-                                           foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
+                                           foreground_color=(0, 0, 0, 1), cursor_color=(0.97, 0.97, 0.99, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
                                            height=40, pos_hint={'center_x': 0.5, 'center_y': 0.8})
         center_button.add_widget(self.centerinput1)
         self.centerinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
-                                           foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
+                                           foreground_color=(0, 0, 0, 1), cursor_color=(0.97, 0.97, 0.99, 1), border=(20, 20, 20, 20), size_hint=(0.3, 0.1),
                                            height=40, pos_hint={'center_x': 0.5, 'center_y': 0.699})
         center_button.add_widget(self.centerinput2)
 
@@ -172,31 +197,35 @@ class MainScreen(Screen):
 
         end_button = FloatLayout()
         add_button = Button(
+            background_normal="button2.png",
+            background_down="button2_pressed.png",
             text="вычислить",
             size_hint=(0.2, 0.1),
             height=50,
             pos_hint={'center_x': 0.5, 'center_y': 0.1},
-            on_press=self.calculate  # Обработчик нажатия
+            on_release=self.calculate  # Обработчик нажатия
         )
         end_button.add_widget(add_button)
         layout.add_widget(end_button)
 
         right_button = FloatLayout()
         add_button = Button(
+            background_normal="button2.png",
+            background_down="button2_pressed.png",
             text="Добавить груз справа",
             size_hint=(0.25, 0.1),
             height=50,
             pos_hint={'center_x': 0.88, 'center_y': 0.9},
-            on_press=self.right_add_weight  # Устанавливаем обработчик нажатия
+            on_release=self.right_add_weight  # Устанавливаем обработчик нажатия
         )
         right_button.add_widget(add_button)
         # Создаем текстовые поля для ввода чисел
         self.rightinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
-                                          foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                          foreground_color=(0, 0, 0, 1), cursor_color=(0.97, 0.97, 0.99, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
                                           height=40, pos_hint={'center_x': 0.88, 'center_y': 0.8})
         right_button.add_widget(self.rightinput1)
         self.rightinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
-                                          foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20),size_hint=(0.25, 0.1),
+                                          foreground_color=(0, 0, 0, 1), cursor_color=(0.97, 0.97, 0.99, 1), border=(20, 20, 20, 20),size_hint=(0.25, 0.1),
                                           height=40, pos_hint={'center_x': 0.88, 'center_y': 0.699})
         right_button.add_widget(self.rightinput2)
         # Добавляем правую кнопку в Layout
@@ -204,20 +233,22 @@ class MainScreen(Screen):
 
         left_button = FloatLayout()
         add_button = Button(
+            background_normal="button2.png",
+            background_down="button2_pressed.png",
             text="Добавить груз слева",
             size_hint=(0.25, 0.1),
             height=50,
             pos_hint={'center_x': 0.12, 'center_y': 0.9},
-            on_press=self.left_add_weight  # Устанавливаем обработчик нажатия
+            on_release=self.left_add_weight  # Устанавливаем обработчик нажатия
         )
         left_button.add_widget(add_button)
         # Создаем текстовые поля для ввода чисел
         self.leftinput1 = MHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
-                                         foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                         foreground_color=(0, 0, 0, 1), cursor_color=(0.97, 0.97, 0.99, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
                                          height=40, pos_hint={'center_x': 0.12, 'center_y': 0.8})
         left_button.add_widget(self.leftinput1)
         self.leftinput2 = LHintTextInput(hint_text_color=(0, 0, 0, 0.5), background_normal="button.png", background_active="button_pressed.png",
-                                         foreground_color=(0, 0, 0, 1), cursor_color=(1, 1, 1, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
+                                         foreground_color=(0, 0, 0, 1), cursor_color=(0.97, 0.97, 0.99, 1), border=(20, 20, 20, 20), size_hint=(0.25, 0.1),
                                          height=40, pos_hint={'center_x': 0.12, 'center_y': 0.699})
         left_button.add_widget(self.leftinput2)
         # Добавляем левую кнопку в Layout
@@ -311,24 +342,48 @@ class MainScreen(Screen):
             self.twoshow_popup(instance)
 
     def center_add_weight(self, instance):
-        self.center_weight1 = str(self.centerinput1.text)
-        self.center_weight2 = str(self.centerinput2.text)
-
-        if self.center_weight1 == "Задайте массу..." or self.center_weight2 == "Задайте расстояние...":
-            try:
-                self.center_weight1 = float(self.center_weight1)
-                self.centerw = float(self.center_weight1)
-            except ValueError:
+        if self.centerinput1.text != "0" and self.centerinput2.text != "0":
+            self.center_weight1 = str(self.centerinput1.text)
+            self.center_weight2 = str(self.centerinput2.text)
+            if self.center_weight1 == "Задайте массу..." or self.center_weight2 == "Задайте расстояние...":
                 try:
-                    self.center_weight2 = float(self.center_weight2)
-                    self.centerw = float(self.center_weight2)
+                    self.center_weight1 = float(self.center_weight1)
+                    self.centerw = float(self.center_weight1)
                 except ValueError:
-                    self.twoshow_popup(instance)
+                    try:
+                        self.center_weight2 = float(self.center_weight2)
+                        self.centerw = float(self.center_weight2)
+                    except ValueError:
+                        self.twoshow_popup(instance)
+            else:
+                self.oneshow_popup(instance)
+            print(f"центр: {self.centerw}")
         else:
-            self.oneshow_popup(instance)
-        print(f"центр: {self.centerw}")
+            self.fourshow_popup(instance)
+
+    def fourshow_popup(self, instance):
+        popup_content = FloatLayout()
+
+        popup_label = Label(text="Вы ввели ноль", size_hint=(0.8, 0.2),
+                            pos_hint={'center_x': 0.5, 'center_y': 0.7})
+        close_button = Button(text="Ок", size_hint=(0.6, 0.25), pos_hint={'center_x': 0.5, 'center_y': 0.3})
+
+        popup_content.add_widget(popup_label)
+        popup_content.add_widget(close_button)
+
+        popup = Popup(title="Новое окно",
+                      content=popup_content,
+                      size_hint=(0.8, 0.5),
+                      auto_dismiss=False)
+
+        close_button.bind(on_press=popup.dismiss)
+
+        popup.open()
 
     def threershow_popup(self, instance):
+        self.result = str(self.result)
+        if len(self.result) > 5:
+            self.result = float(self.result[0] + self.result[1] + self.result[2] + self.result[3])
         popup_content = FloatLayout()
         if self.leftresult > self.rightresult:
             a = str("справа")
