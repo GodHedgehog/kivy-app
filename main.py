@@ -123,13 +123,19 @@ class SecondScreen(Screen):
 
         yes = AnchorLayout()
 
-        scroll_view = ScrollView()
+        scroll_view = ScrollView(size_hint=(1, 1))
 
-        layout = BoxLayout(orientation="vertical", size_hint_y=None)
+        layout = BoxLayout(orientation="vertical", size_hint_y=None, padding=10, spacing=10)
         layout.bind(minimum_height=layout.setter('height'))
 
-        label = Label(text='Строка', color=(0, 0, 0, 0.8), pos_hint={'center_x': 0.1, 'center_y': 0.9}, size_hint_y=None, height=50, font_size=20)
-        layout.add_widget(label)
+        label1 = Label(text='Документация', color=(0, 0, 0, 0.8), size_hint_y=None, height=80, font_size=30, text_size=(None, None), halign='center')
+        label2 = Label(text=f' Для начала следует ввести массу и расстояние грузов(вводить можно только цифры) после ввода данных нужно нажать на кнопку "Добавить груз слева/справа" для отображения груза.'
+                            f' После добавления грузов слева и справа нужно добавить значение груза для выравнивания (расстояние или массу).'
+                            f' После нажимаем на кнопку "Вычислить" под рычагом и вам выводится то, на какое расстояние'
+                            f' или же какой массы следует добавить груз.', color=(0, 0, 0, 0.8),
+                       size_hint_y=None, text_size=(self.x - 10, None), height=50, font_size=18, halign='justify')
+        layout.add_widget(label1)
+        layout.add_widget(label2)
         scroll_view.add_widget(layout)
         yes.add_widget(scroll_view)
 
@@ -212,7 +218,7 @@ class MainScreen(Screen):
         add_button = Button(
             background_normal="button2.png",
             background_down="button2_pressed.png",
-            text="Добавить груз справа",
+            text="добавить груз справа",
             size_hint=(0.25, 0.1),
             height=50,
             pos_hint={'center_x': 0.88, 'center_y': 0.9},
@@ -235,7 +241,7 @@ class MainScreen(Screen):
         add_button = Button(
             background_normal="button2.png",
             background_down="button2_pressed.png",
-            text="Добавить груз слева",
+            text="добавить груз слева",
             size_hint=(0.25, 0.1),
             height=50,
             pos_hint={'center_x': 0.12, 'center_y': 0.9},
