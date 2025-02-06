@@ -128,12 +128,12 @@ class SecondScreen(Screen):
         layout = BoxLayout(orientation="vertical", size_hint_y=None, padding=10, spacing=10)
         layout.bind(minimum_height=layout.setter('height'))
 
-        label1 = Label(text='Документация', color=(0, 0, 0, 0.8), size_hint_y=None, height=80, font_size=30, text_size=(None, None), halign='center')
+        label1 = Label(text='Документация', color=(0, 0, 0, 0.8), size_hint_y=None, height=(self.a/10), font_size=(self.a/15), text_size=(None, None), halign='center')
         label2 = Label(text=f' Для начала следует ввести массу и расстояние грузов(вводить можно только цифры) после ввода данных нужно нажать на кнопку "Добавить груз слева/справа" для отображения груза.'
                             f' После добавления грузов слева и справа нужно добавить значение груза для выравнивания (расстояние или массу).'
                             f' После нажимаем на кнопку "Вычислить" под рычагом и вам выводится то, на какое расстояние'
                             f' или же какой массы следует добавить груз.', color=(0, 0, 0, 0.8),
-                       size_hint_y=None, text_size=(self.x - self.a/10, None), height=50, font_size=(self.a/20), halign='justify')
+                       size_hint_y=None, text_size=(self.x - self.a/10, None), height=(self.a/2), font_size=(self.a/20), halign='justify')
         layout.add_widget(label1)
         layout.add_widget(label2)
         scroll_view.add_widget(layout)
