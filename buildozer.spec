@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = Levecalc
+title = Max
 
 # (str) Package name
-package.name = levecalcApk
+package.name = MaxcApk
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.godhedgehog
@@ -450,3 +450,4 @@ warn_on_root = 1
 #    Then, invoke the command line with the "demo" profile:
 #
 #buildozer --profile demo android debug
+
