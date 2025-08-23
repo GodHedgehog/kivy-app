@@ -101,7 +101,7 @@ fullscreen = 0
 #android.features = android.hardware.usb.host
 
 # (int) Target Android API, should be as high as possible.
-android.api = 33
+android.api = 21
 
 # (int) Minimum API your APK / AAB will support.
 #android.minapi = 21
@@ -113,10 +113,10 @@ android.api = 33
 #android.ndk = 23b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
-#android.ndk_api = 21
+android.ndk_api = 21
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
-#android.private_storage = True
+android.private_storage = True
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
 #android.ndk_path =
@@ -158,7 +158,7 @@ android.api = 33
 #android.service_class_name = org.kivy.android.PythonService
 
 # (str) Android app theme, default is ok for Kivy-based app
-# android.apptheme = "@android:style/Theme.NoTitleBar"
+android.apptheme = "@android:style/Theme.NoTitleBar"
 
 # (list) Pattern to whitelist for the whole project
 #android.whitelist =
@@ -206,7 +206,7 @@ android.gradle_dependencies = androidx.appcompat:appcompat:1.6.1,com.google.andr
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
 # android.enable_androidx requires android.api >= 28
-#android.enable_androidx = True
+android.enable_androidx = 1
 
 # (list) add java compile options
 # this can for example be necessary when importing certain java libraries using the 'android.gradle_dependencies' option
@@ -279,7 +279,7 @@ android.gradle_dependencies = androidx.appcompat:appcompat:1.6.1,com.google.andr
 #android.adb_args = -H host.docker.internal
 
 # (bool) Copy library instead of making a libpymodules.so
-#android.copy_libs = 1
+android.copy_libs = 1
 
 # (list) The Android archs to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 # In past, was `android.arch` as we weren't supporting builds for multiple archs at the same time.
@@ -450,6 +450,7 @@ warn_on_root = 1
 #    Then, invoke the command line with the "demo" profile:
 #
 #buildozer --profile demo android debug
+
 
 
 
