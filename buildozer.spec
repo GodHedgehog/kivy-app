@@ -201,9 +201,7 @@ android.api = 33
 #android.add_resources =
 
 # (list) Gradle dependencies to add
-android.gradle_dependencies = 
-    androidx.appcompat:appcompat:1.6.1
-    com.google.android.material:material:1.9.0
+android.gradle_dependencies = 'androidx.appcompat:appcompat:1.6.1,com.google.android.material:material:1.9.0'
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
@@ -452,6 +450,7 @@ warn_on_root = 1
 #    Then, invoke the command line with the "demo" profile:
 #
 #buildozer --profile demo android debug
+
 
 
 
