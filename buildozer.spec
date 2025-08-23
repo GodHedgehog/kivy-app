@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,pyjnius,kivy==2.1.0,kivymd==0.104.2,pillow==8.3.1
+requirements = python3,pyjnius,kivy,kivymd,pillow
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -158,7 +158,7 @@ android.ndk_api = 21
 #android.service_class_name = org.kivy.android.PythonService
 
 # (str) Android app theme, default is ok for Kivy-based app
-#android.apptheme = "@android:style/Theme.NoTitleBar"
+android.apptheme = "@style/Theme.MaterialComponents.DayNight.DarkActionBar"
 
 # (list) Pattern to whitelist for the whole project
 #android.whitelist =
@@ -200,10 +200,10 @@ android.ndk_api = 21
 # android.add_resources = legal_resources
 #android.add_resources =
 
-#android.enable_androidx = 1
+android.enable_androidx = 1
 
 # (list) Gradle dependencies to add
-#android.gradle_dependencies = 'androidx.appcompat:appcompat:1.5.1,com.google.android.material:material:1.7.0'
+android.gradle_dependencies = 'androidx.appcompat:appcompat:1.5.1,com.google.android.material:material:1.7.0'
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
@@ -452,6 +452,7 @@ warn_on_root = 1
 #    Then, invoke the command line with the "demo" profile:
 #
 #buildozer --profile demo android debug
+
 
 
 
