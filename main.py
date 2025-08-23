@@ -11,22 +11,20 @@ class TestApp(App):
         PythonActivity = autoclass('org.kivy.android.PythonActivity')
         AlertDialogBuilder = autoclass('android.app.AlertDialog$Builder')
         DialogInterface = autoclass('android.content.DialogInterface')
+        JavaString = autoclass('java.lang.String')
 
-        # Активность
         activity = PythonActivity.mActivity
-
-        # Создаём AlertDialog
         dialog = AlertDialogBuilder(activity)
-        dialog.setTitle("Ошибка")
-        dialog.setMessage("К сожалению, приложение остановлено.")
+
+        # ВАЖНО: оборачиваем строки в java.lang.String
+        dialog.setTitle(JavaString("Ошибка"))
+        dialog.setMessage(JavaString("К сожалению, приложение остановлено."))
         dialog.setCancelable(False)
 
-        # Добавляем кнопку OK (иначе краш)
         def on_click(dialog_interface, which):
             dialog_interface.dismiss()
-        dialog.setPositiveButton("OK", on_click)
 
-        # Показываем
+        dialog.setPositiveButton(JavaString("OK"), on_click)
         dialog.show()
 
 TestApp().run()
