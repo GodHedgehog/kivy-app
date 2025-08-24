@@ -11,14 +11,14 @@ class BlackScreen(Widget):
 
 class TestApp(App):
     def build(self):
-        # через 3 секунды показать длинный toast и закрыть приложение
-        Clock.schedule_once(lambda dt: self.show_long_toast(
+        # через 3 секунды показать toast и закрыть приложение
+        Clock.schedule_once(lambda dt: self.show_toast_and_exit(
             "К сожалению, приложение остановлено.\n"
-            "Это тестовое сообщение оформлено как настоящий Toast.\n"
-            "Оно будет висеть примерно 10 секунд.", duration=6), 1)
+            "Это тестовое сообщение оформлено как настоящий Toast."
+        ), 3)
         return BlackScreen()
 
-    def show_long_toast(self, text, duration=10):
+    def show_toast_and_exit(self, text):
         PythonActivity = autoclass('org.kivy.android.PythonActivity')
         Toast = autoclass('android.widget.Toast')
         TextView = autoclass('android.widget.TextView')
@@ -31,22 +31,26 @@ class TestApp(App):
         Resources = activity.getResources()
         toast_frame_id = Resources.getIdentifier("toast_frame", "drawable", "android")
 
-        def make_toast(*_):
+        def make_toast():
             tv = TextView(activity)
             tv.setText(String(text))
-            tv.setTextColor(Color.WHITE)
+            tv.setTextColor(Color.RED)
             tv.setTextSize(16)
             tv.setPadding(40, 25, 40, 25)
             tv.setBackgroundResource(toast_frame_id)
+            tv.setLineSpacing(1.2, 1.2)  # добавляем немного межстрочного интервала
+            tv.setSingleLine(False)      # многострочный текст
+            tv.setMaxLines(10)           # ограничение по высоте
 
             toast = Toast(activity)
             toast.setDuration(Toast.LENGTH_LONG)
             toast.setView(tv)
             toast.show()
 
-        # запускаем Toast несколько раз, но каждый вызов через UI-поток
-        repeats = duration // 3
-        for i in range(repeats):
-            Clock.schedule_once(lambda dt: activity.runOnUiThread(make_toast), i * 3)
+            # закрыть приложение через LENGTH_LONG (~3.5 сек)
+            Clock.schedule_once(lambda dt: activity.finish(), 3.5)
+
+        # запускаем в UI-потоке
+        activity.runOnUiThread(make_toast)
 
 TestApp().run()
