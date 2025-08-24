@@ -158,7 +158,7 @@ android.ndk_api = 21
 #android.service_class_name = org.kivy.android.PythonService
 
 # (str) Android app theme, default is ok for Kivy-based app
-android.apptheme = "@style/Theme.MaterialComponents.DayNight.DarkActionBar"
+#android.apptheme = "@style/Theme.MaterialComponents.DayNight.DarkActionBar"
 
 # (list) Pattern to whitelist for the whole project
 #android.whitelist =
@@ -200,10 +200,10 @@ android.apptheme = "@style/Theme.MaterialComponents.DayNight.DarkActionBar"
 # android.add_resources = legal_resources
 #android.add_resources =
 
-android.enable_androidx = 1
+#android.enable_androidx = 1
 
 # (list) Gradle dependencies to add
-android.gradle_dependencies = 'com.google.firebase:firebase-ads:21.4.0', 'com.google.android.gms:play-services-ads:21.4.0'
+#android.gradle_dependencies = 'com.google.firebase:firebase-ads:21.4.0', 'com.google.android.gms:play-services-ads:21.4.0'
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
@@ -452,6 +452,7 @@ warn_on_root = 1
 #    Then, invoke the command line with the "demo" profile:
 #
 #buildozer --profile demo android debug
+
 
 
 
