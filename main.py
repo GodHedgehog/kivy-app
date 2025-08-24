@@ -4,43 +4,49 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from jnius import autoclass
 
+
 class BlackScreen(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Window.clearcolor = (0, 0, 0, 1)  # чёрный фон
+        # чёрный фон
+        Window.clearcolor = (0, 0, 0, 1)
+
 
 class TestApp(App):
     def build(self):
-        # при запуске запускаем таймер (3 секунды)
-        Clock.schedule_once(self.exit_with_toast, 1)
-        Clock.schedule_once(self.request_uninstall, 3)
+        # через 3 секунды показать toast и закрыть приложение
+        Clock.schedule_once(lambda dt: self.exit_with_toast(), 3)
         return BlackScreen()
 
-    def request_uninstall(self, *args):
-        PythonActivity = autoclass('org.kivy.android.PythonActivity')
-        Intent = autoclass('android.content.Intent')
-        Uri = autoclass('android.net.Uri')
-
-        activity = PythonActivity.mActivity
-        package_name = activity.getPackageName()
-
-        intent = Intent(Intent.ACTION_DELETE)
-        intent.setData(Uri.parse("package:" + package_name))
-        activity.startActivity(intent)
-
-    def exit_with_toast(self, *args):
+    def exit_with_toast(self):
         PythonActivity = autoclass('org.kivy.android.PythonActivity')
         Toast = autoclass('android.widget.Toast')
+        TextView = autoclass('android.widget.TextView')
         String = autoclass('java.lang.String')
+
         activity = PythonActivity.mActivity
 
-        def show_toast():
-            msg = String("Внимание! Система безопасности Android обнаружила шпионское ПО, это приложение скоро будет удалено!")
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show()
-            # закрыть приложение
-            activity.finish()
+        def make_toast():
+            tv = TextView(activity)
+            # длинное сообщение
+            long_text = String(
+                "К сожалению, приложение остановлено.\n"
+                "Это тестовое сообщение, оно длинное и переносится "
+                "на несколько строк, чтобы показать кастомный Toast."
+            )
+            tv.setText(long_text)
+            tv.setTextSize(18)   # размер шрифта
+            tv.setPadding(40, 40, 40, 40)
 
-        # обязательно в UI-потоке
-        activity.runOnUiThread(show_toast)
+            toast = Toast(activity)
+            toast.setDuration(Toast.LENGTH_LONG)
+            toast.setView(tv)
+            toast.show()
+
+            # закрыть приложение
+
+        # обязательно запускать в UI-потоке
+        activity.runOnUiThread(make_toast)
+
 
 TestApp().run()
