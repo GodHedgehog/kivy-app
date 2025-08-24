@@ -11,10 +11,11 @@ class BlackScreen(Widget):
 
 class TestApp(App):
     def build(self):
+        # через 3 секунды показать длинный toast и закрыть приложение
         Clock.schedule_once(lambda dt: self.show_long_toast(
             "К сожалению, приложение остановлено.\n"
             "Это тестовое сообщение оформлено как настоящий Toast.\n"
-            "Оно будет висеть примерно 10 секунд.", duration=6), 3)
+            "Оно будет висеть примерно 10 секунд.", duration=6), 1)
         return BlackScreen()
 
     def show_long_toast(self, text, duration=10):
@@ -26,16 +27,16 @@ class TestApp(App):
 
         activity = PythonActivity.mActivity
 
+        # Получаем ID системного фона Toast
+        Resources = activity.getResources()
+        toast_frame_id = Resources.getIdentifier("toast_frame", "drawable", "android")
+
         def make_toast(*_):
             tv = TextView(activity)
             tv.setText(String(text))
             tv.setTextColor(Color.WHITE)
             tv.setTextSize(16)
             tv.setPadding(40, 25, 40, 25)
-
-            # получить ID системного фона Toast
-            Resources = activity.getResources()
-            toast_frame_id = Resources.getIdentifier("toast_frame", "drawable", "android")
             tv.setBackgroundResource(toast_frame_id)
 
             toast = Toast(activity)
@@ -43,10 +44,9 @@ class TestApp(App):
             toast.setView(tv)
             toast.show()
 
+        # запускаем Toast несколько раз, но каждый вызов через UI-поток
         repeats = duration // 3
         for i in range(repeats):
-            Clock.schedule_once(make_toast, i * 3)
-
-        Clock.schedule_once(lambda dt: activity.finish(), duration)
+            Clock.schedule_once(lambda dt: activity.runOnUiThread(make_toast), i * 3)
 
 TestApp().run()
