@@ -23,6 +23,7 @@ class TestApp(App):
         TextView = autoclass('android.widget.TextView')
         Color = autoclass('android.graphics.Color')
         String = autoclass('java.lang.String')
+        GradientDrawable = autoclass("android.graphics.drawable.GradientDrawable")
 
         activity = PythonActivity.mActivity
 
@@ -40,6 +41,13 @@ class TestApp(App):
             tv.setLineSpacing(1.2, 1.2)  # добавляем немного межстрочного интервала
             tv.setSingleLine(False)      # многострочный текст
             tv.setMaxLines(10)           # ограничение по высоте
+
+            # 🔹 Создаем фон с закругленными углами и обводкой
+            bg = GradientDrawable()
+            bg.setShape(GradientDrawable.RECTANGLE)
+            bg.setColor(Color.WHITE)  # фон
+            bg.setCornerRadius(25)  # скругление углов (px)
+            bg.setStroke(4, Color.GRAY)  # толщина и цвет рамки
 
             toast = Toast(activity)
             toast.setDuration(Toast.LENGTH_LONG)
