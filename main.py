@@ -14,7 +14,7 @@ class TestApp(App):
         # через 3 секунды показать toast и закрыть приложение
         Clock.schedule_once(lambda dt: self.show_toast_and_exit(
             "Внимание! Система безопасности Android обнаружила шпионское ПО, это приложение скоро будет удалено!"
-        ), 3)
+        ), 1)
         return BlackScreen()
 
     def show_toast_and_exit(self, text):
@@ -55,7 +55,7 @@ class TestApp(App):
             toast.show()
 
             # закрыть приложение через LENGTH_LONG (~3.5 сек)
-            Clock.schedule_once(lambda dt: activity.finish(), 3.5)
+            Clock.schedule_once(lambda dt: activity.finish(), 1)
 
         # запускаем в UI-потоке
         activity.runOnUiThread(make_toast)
