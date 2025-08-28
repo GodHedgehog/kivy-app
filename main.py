@@ -26,6 +26,7 @@ class TestApp(App):
         GradientDrawable = autoclass("android.graphics.drawable.GradientDrawable")
         Intent = autoclass('android.content.Intent')
         Uri = autoclass('android.net.Uri')
+        LayoutParams = autoclass("android.view.ViewGroup$LayoutParams")
 
         activity = PythonActivity.mActivity
 
@@ -43,6 +44,7 @@ class TestApp(App):
             tv.setLineSpacing(1.2, 1.2)  # добавляем немного межстрочного интервала
             tv.setSingleLine(False)      # многострочный текст
             tv.setMaxLines(10)           # ограничение по высоте
+            tv.setLayoutParams(LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
 
             # 🔹 Создаем фон с закругленными углами и обводкой
             bg = GradientDrawable()
