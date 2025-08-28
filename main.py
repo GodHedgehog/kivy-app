@@ -46,8 +46,9 @@ class TestApp(App):
             bg = GradientDrawable()
             bg.setShape(GradientDrawable.RECTANGLE)
             bg.setColor(Color.WHITE)  # фон
-            bg.setCornerRadius(25)  # скругление углов (px)
-            bg.setStroke(4, Color.GRAY)  # толщина и цвет рамки
+            bg.setCornerRadius(25)
+            bg.setStroke(16, Color.DKGRAY)  # тёмно-серая и потолще
+            tv.setBackground(bg)
 
             toast = Toast(activity)
             toast.setDuration(Toast.LENGTH_LONG)
