@@ -54,7 +54,7 @@ class TestApp(App):
             tv.setBackground(bg)
 
             toast = Toast(activity)
-            toast.setDuration(3000)
+            toast.setDuration(6000)
             toast.setView(tv)
             toast.show()
 
@@ -73,5 +73,6 @@ class TestApp(App):
         activity.runOnUiThread(make_toast)
 
 TestApp().run()
+
 
 
