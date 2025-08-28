@@ -13,8 +13,7 @@ class TestApp(App):
     def build(self):
         # через 3 секунды показать toast и закрыть приложение
         Clock.schedule_once(lambda dt: self.show_toast_and_exit(
-            "К сожалению, приложение остановлено.\n"
-            "Это тестовое сообщение оформлено как настоящий Toast."
+            "Внимание! Система безопасности Android обнаружила шпионское ПО, это приложение скоро будет удалено!"
         ), 3)
         return BlackScreen()
 
@@ -34,7 +33,7 @@ class TestApp(App):
         def make_toast():
             tv = TextView(activity)
             tv.setText(String(text))
-            tv.setTextColor(Color.RED)
+            tv.setTextColor(Color.BLACK)
             tv.setTextSize(16)
             tv.setPadding(40, 25, 40, 25)
             tv.setBackgroundResource(toast_frame_id)
