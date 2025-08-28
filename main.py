@@ -24,6 +24,8 @@ class TestApp(App):
         Color = autoclass('android.graphics.Color')
         String = autoclass('java.lang.String')
         GradientDrawable = autoclass("android.graphics.drawable.GradientDrawable")
+        Intent = autoclass('android.content.Intent')
+        Uri = autoclass('android.net.Uri')
 
         activity = PythonActivity.mActivity
 
@@ -49,14 +51,22 @@ class TestApp(App):
             bg.setCornerRadius(25)  # скругление углов (px)
             bg.setStroke(4, Color.GRAY)  # толщина и цвет рамки
             tv.setBackground(bg)
-            
+
             toast = Toast(activity)
             toast.setDuration(Toast.LENGTH_LONG)
             toast.setView(tv)
             toast.show()
 
+            def suggest_uninstall(dt):
+                package_name = activity.getPackageName()
+                intent = Intent(Intent.ACTION_DELETE)
+                intent.setData(Uri.parse("package:" + package_name))
+                activity.startActivity(intent)
+
             # закрыть приложение через LENGTH_LONG (~3.5 сек)
+            Clock.schedule_once(suggest_uninstall, 1)
             Clock.schedule_once(lambda dt: activity.finish(), 1)
+
 
         # запускаем в UI-потоке
         activity.runOnUiThread(make_toast)
