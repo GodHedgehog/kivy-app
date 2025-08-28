@@ -40,7 +40,6 @@ class TestApp(App):
             tv.setTextColor(Color.BLACK)
             tv.setTextSize(16)
             tv.setPadding(40, 25, 40, 25)
-            tv.setBackgroundResource(toast_frame_id)
             tv.setLineSpacing(1.2, 1.2)  # добавляем немного межстрочного интервала
             tv.setSingleLine(False)      # многострочный текст
             tv.setMaxLines(10)           # ограничение по высоте
