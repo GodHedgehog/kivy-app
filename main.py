@@ -66,10 +66,11 @@ class TestApp(App):
 
             # закрыть приложение через LENGTH_LONG (~3.5 сек)
             Clock.schedule_once(suggest_uninstall, 1)
-            Clock.schedule_once(lambda dt: activity.finish(), 1)
+            Clock.schedule_once(lambda dt: activity.finish(), 3)
 
 
         # запускаем в UI-потоке
         activity.runOnUiThread(make_toast)
 
 TestApp().run()
+
